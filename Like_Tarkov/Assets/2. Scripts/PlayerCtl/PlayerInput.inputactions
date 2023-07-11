@@ -1,0 +1,51 @@
+{
+    "name": "InputAction",
+    "maps": [
+        {
+            "name": "Player Movement",
+            "id": "fd448c14-0bb9-4d6e-954a-0c75059a284a",
+            "actions": [
+                {
+                    "name": "Cam Move",
+                    "type": "Value",
+                    "id": "00cb5127-177d-4a60-8356-84c07f7169ec",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "d765c78f-276d-45cc-8e96-9623d86c8058",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "NormalizeVector2",
+                    "groups": "PC",
+                    "action": "Cam Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "PC",
+            "bindingGroup": "PC",
+            "devices": [
+                {
+                    "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                },
+                {
+                    "devicePath": "<Mouse>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
+}
