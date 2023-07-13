@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class CamCtl : MonoBehaviour
 {
+    [SerializeField] private GameObject playerBody;
+    
     [SerializeField] private float xAxisSpeed = 5; // x축 회전 속도
     [SerializeField] private float yAxisSpeed = 3; // y축 회전 속도
 
@@ -16,13 +18,14 @@ public class CamCtl : MonoBehaviour
 
     public void UpdateRotate(float mouseX, float mouseY)
     {
-        eulerAngleY += mouseX * yAxisSpeed * Time.deltaTime; // 마우스 좌/우 이동 -> y축 회전
-        eulerAngleX -= mouseY * xAxisSpeed * Time.deltaTime; // 마우스 상/하 이동 -> x축 회전
+        eulerAngleY += mouseX * yAxisSpeed; // 마우스 좌/우 이동 -> y축 회전
+        eulerAngleX -= mouseY * xAxisSpeed; // 마우스 상/하 이동 -> x축 회전
 
         // x축 회전 제한
         eulerAngleX = ClampAngle(eulerAngleX, limitMinX, limitMaxX);
 
-        transform.rotation = Quaternion.Euler(eulerAngleX, eulerAngleY, 0);
+        Camera.main.transform.rotation = Quaternion.Euler(eulerAngleX, eulerAngleY, 0);
+        transform.rotation = Quaternion.Euler(0, eulerAngleY, 0);
     }
 
     private float ClampAngle(float angle, float min, float max)
