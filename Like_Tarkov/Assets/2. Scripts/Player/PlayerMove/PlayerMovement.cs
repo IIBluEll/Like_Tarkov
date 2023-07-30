@@ -2,11 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.Controls;
 
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private Transform orientation;
-
+    [SerializeField] private PlayerAnimationController playerAnimCtl;
+    [SerializeField] private Weapon_AssultRifle assultRifle;
+    
     [Header(" MoveMent ")] [SerializeField]
     private float moveSpeed = 6f;
 
@@ -45,6 +48,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 slopeMoveDirection;
 
     private Rigidbody rb;
+    
 
     private RaycastHit slopeHit;
 
@@ -78,12 +82,15 @@ public class PlayerMovement : MonoBehaviour
         PlayerInput();
         ControlDrag();
         ControlSpeed();
-
+        WeaponAction();
+        
         if (Input.GetKeyDown(jumpKey) && isGrounded)
         {
             Jump();
         }
 
+        playerAnimCtl.AnimMoveSpeed = moveSpeed;
+        
         slopeMoveDirection = Vector3.ProjectOnPlane(moveDirection, slopeHit.normal);
     }
 
@@ -114,6 +121,10 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKey(sprintKey) && isGrounded)
         {
             moveSpeed = Mathf.Lerp(moveSpeed, sprintSpeed, acceleration * Time.deltaTime);
+        }
+        else if (horizontalMove == 0 && verticalMove == 0)
+        {
+            moveSpeed = Mathf.Lerp(moveSpeed, 0, acceleration * Time.deltaTime);
         }
         else
         {
@@ -146,6 +157,18 @@ public class PlayerMovement : MonoBehaviour
         else if (!isGrounded)
         {
             rb.AddForce(moveDirection.normalized * moveSpeed * movementMulti * airMulti, ForceMode.Acceleration);
+        }
+    }
+
+    private void WeaponAction()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            assultRifle.StartWeaponAction();
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            assultRifle.StopWeaponAction();
         }
     }
 }
