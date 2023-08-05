@@ -32,6 +32,9 @@ public class Weapon_AssultRifle : MonoBehaviour
    {
       gunAudioSource = GetComponent<AudioSource>();
       bulletCasingPool = GetComponent<BulletCasing_Pool>();
+      
+      // 처음 탄 수는 최대로 설정
+      weaponSetting.currentAmmo = weaponSetting.maxAmmo;
    }
 
    private void OnEnable()
@@ -96,6 +99,15 @@ public class Weapon_AssultRifle : MonoBehaviour
          }
 
          lastAttackTime = Time.time;
+         
+         // 탄이 없으면 공격 불가능
+         if (weaponSetting.currentAmmo <= 0)
+         {
+            return;
+         }
+
+         weaponSetting.currentAmmo--;
+         
          playerAnim.Play("Fire", -1, 0);
 
          StartCoroutine("OnMuzzleFlashEffect");

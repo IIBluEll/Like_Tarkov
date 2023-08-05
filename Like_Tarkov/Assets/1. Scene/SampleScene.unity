@@ -1478,9 +1478,12 @@ MonoBehaviour:
   muzzleFlashEffect: {fileID: 1624880775}
   casingSpwanPoint: {fileID: 225771555}
   weaponSetting:
+    weaponName: 0
     attackRate: 0.1
     attackDistance: 30
     isAutomaticAttack: 1
+    currentAmmo: 0
+    maxAmmo: 30
 --- !u!114 &92441947
 MonoBehaviour:
   m_ObjectHideFlags: 0
