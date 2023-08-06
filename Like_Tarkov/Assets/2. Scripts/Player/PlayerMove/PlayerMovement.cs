@@ -114,6 +114,8 @@ public class PlayerMovement : MonoBehaviour
         verticalMove = Input.GetAxis("Vertical");
 
         moveDirection = orientation.forward * verticalMove + orientation.right * horizontalMove;
+        
+        
     }
 
     private void ControlSpeed()

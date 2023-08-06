@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   smooth: 4
-  swayMulitple: 6
+  swayMulitple: 10
 --- !u!1 &85196416
 GameObject:
   m_ObjectHideFlags: 0
