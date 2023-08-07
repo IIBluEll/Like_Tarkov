@@ -12,6 +12,8 @@ public class PlayerInputMgr : MonoBehaviour
    public bool IsSprinting { get; private set; }
    public bool Mouse0ButtonDown { get; private set; }
    public bool Mouse0ButtonUp { get; private set; }
+   
+   public bool Mouse1Button { get; private set; }
 
    private void Update()
    {
@@ -23,5 +25,7 @@ public class PlayerInputMgr : MonoBehaviour
 
       Mouse0ButtonDown = Input.GetMouseButtonDown(0);
       Mouse0ButtonUp = Input.GetMouseButtonUp(0);
+
+      Mouse1Button = Input.GetMouseButton(1);
    }
 }

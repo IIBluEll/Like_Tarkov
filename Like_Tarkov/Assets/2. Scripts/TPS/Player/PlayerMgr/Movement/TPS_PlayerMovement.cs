@@ -1,14 +1,11 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody),
-                 typeof(PlayerInputMgr),
-                 typeof(PlayerMovement_Status))]
 public class TPS_PlayerMovement : MonoBehaviour
 {
     private PlayerInputMgr inputMgr;
     private PlayerMovement_Status movementStatus;
-
-    [SerializeField] private PlayerAnimationController playerAnimCtl;
+    private Rigidbody rb;
+    private PlayerAnimationController playerAnimCtl;
     
     private float horizontalMove;
     private float verticalMove;
@@ -26,16 +23,16 @@ public class TPS_PlayerMovement : MonoBehaviour
 
     [Space(10f), Header(" Drag ")] 
     [SerializeField] private float groundDrag = 6f;
-    [SerializeField] private float airDrag = 2f;
+    [SerializeField] private float airDrag = 6f;
     
     [Space(10f), Header(" Ground Detection")] 
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private Transform groundCheck;
-    private bool isGrounded;
-    private float groundDistance = 0.4f;
-    private float playerHeight = 1.5f;
+    [SerializeField] private bool isGrounded;
+    private float groundDistance = 0.1f;
+    private float playerHeight = 2f;
 
-    private Rigidbody rb;
+    
     private RaycastHit slopeHit;
 
     private float smoothness = 10f;
@@ -43,11 +40,11 @@ public class TPS_PlayerMovement : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true;
-
+        playerAnimCtl = GetComponent<PlayerAnimationController>();
         inputMgr = GetComponent<PlayerInputMgr>();
         movementStatus = GetComponent<PlayerMovement_Status>();
         
+        rb.freezeRotation = true;
         //Debug
         CheckAssigned();
     }
@@ -76,7 +73,7 @@ public class TPS_PlayerMovement : MonoBehaviour
 
     private bool OnSlope()
     {
-        if (!Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight / 2 + 0.5f)) 
+        if (!Physics.Raycast(transform.position, Vector3.down, out slopeHit, 0.1f)) 
             return false;
 
         return slopeHit.normal != Vector3.up;

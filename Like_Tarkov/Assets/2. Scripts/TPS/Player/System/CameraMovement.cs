@@ -1,17 +1,22 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraMovement : MonoBehaviour
 {
     [Header("Assign Objects")]
     // 카메라가 따라갈 대상
     [SerializeField] private Transform objectToFollow;
+    // 줌했을 때 카메라 Transform
+    [SerializeField] private Transform zoomCamera;
     // 실제 카메라 Transform
     [SerializeField] private Transform realCamera;
     // 플레이어 오브젝트
     [SerializeField] private Transform playerBody;
     // 플레이어 상체
     [SerializeField] private Transform playerUpperBody;
+    // 입력 시스템
+    [SerializeField] private PlayerInputMgr playerInputMgr;
     
     [Space(10f), Header("Camera Status")]
     [SerializeField] private float followSpeed = 10f;   // 카메라 이동 속도
@@ -54,23 +59,43 @@ public class CameraMovement : MonoBehaviour
         
         // 카메라의 회전값을 제한 각도 내로 고정
         rotX = Math.Clamp(rotX, -clamAngle, clamAngle);
-        Quaternion rot = Quaternion.Euler(rotX, rotY, 0);
+        var rot = Quaternion.Euler(rotX, rotY, 0);
 
         // 카메라의 회전 적용
-        transform.rotation = rot;
+        transform.rotation = zoomCamera.rotation = rot;
     }
 
     private void LateUpdate()
     {
-        // 플레이어 몸이 카메라를 자연스럽게 따라가기 위함
-        PlayerBodyRotate();
+        var mainCamera = Camera.main;
         
-        // 카메라가 플레이어를 따라가도록 위치 업데이트
-        transform.position =
-            Vector3.MoveTowards(transform.position, 
-                                 objectToFollow.position, 
-                         followSpeed * Time.deltaTime);
+        if (playerInputMgr.Mouse1Button)
+        {
+            PlayerBodyRotate();
+            mainCamera.depth = -3;
+        }
+        else
+        {
+            mainCamera.depth = -1;
+            FreeFov();    
+        }
+    }
 
+    private void FreeFov()
+    {
+        // 플레이어가 움직이지 않을 때는 자유시점
+        // 움직일 때는 플레이어 몸이 카메라를 따라감
+        if (playerInputMgr.Horizontal != 0 || playerInputMgr.Vertical != 0)
+        {
+            // 플레이어 몸이 카메라를 자연스럽게 따라가기 위함
+            PlayerBodyRotate();   
+        }
+
+        // 카메라가 플레이어를 따라가도록 위치 업데이트
+        transform.position = Vector3.MoveTowards(transform.position, 
+            objectToFollow.position, 
+            followSpeed * Time.deltaTime);
+        
         finalDir = transform.TransformPoint(dirNormailzed * maxDistance);
 
         RaycastHit hit;
@@ -89,8 +114,8 @@ public class CameraMovement : MonoBehaviour
 
         // 카메라의 위치를 부드럽게 이동
         realCamera.localPosition = Vector3.Lerp(realCamera.localPosition, 
-                                                dirNormailzed * finalDistance,
-                                                Time.deltaTime * smoothness);
+            dirNormailzed * finalDistance,
+            Time.deltaTime * smoothness);
     }
 
     private void PlayerBodyRotate()
