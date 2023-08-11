@@ -14,6 +14,8 @@ public class PlayerInputMgr : MonoBehaviour
    public bool Mouse0ButtonUp { get; private set; }
    
    public bool Mouse1Button { get; private set; }
+   
+   public bool IsReload { get; private set; }
 
    private void Update()
    {
@@ -22,6 +24,7 @@ public class PlayerInputMgr : MonoBehaviour
 
       IsJumping = Input.GetKeyDown(KeyCode.Space);
       IsSprinting = Input.GetKey(KeyCode.LeftShift);
+      IsReload = Input.GetKeyDown(KeyCode.R);
 
       Mouse0ButtonDown = Input.GetMouseButtonDown(0);
       Mouse0ButtonUp = Input.GetMouseButtonUp(0);

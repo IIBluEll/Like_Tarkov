@@ -33,9 +33,19 @@ public class PlayerAnimationController : MonoBehaviour
       get => playerAnimator.GetFloat(YDir);
       set => playerAnimator.SetFloat(YDir,value);
    }
-   
+
+   public void OnReload()
+   {
+      playerAnimator.SetTrigger("OnReload");
+   }
+
    public void Play(string stateName, int layer, float normalizedTime)
    {
       playerAnimator.Play(stateName, layer, normalizedTime);
+   }
+
+   public bool CurrentAnimationIs(string name)
+   {
+      return playerAnimator.GetCurrentAnimatorStateInfo(1).IsName(name);
    }
 }
