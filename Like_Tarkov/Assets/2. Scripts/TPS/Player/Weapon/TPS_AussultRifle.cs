@@ -14,7 +14,10 @@ public class TPS_AussultRifle : MonoBehaviour
     [Space(10f), Header(" ## FIRE EFFECT ##  "),SerializeField]
     private GameObject muzzleFlashEffect;
 
-    [Space(10f), Header(" ## BULLET CASING SPAWN POINT ##"), SerializeField] 
+    [Space(10f), Header(" ## BULLET SPAWN POINT ##"), SerializeField]
+    private Transform bulletSpawnPoint;
+    
+    [Space(10f), Header(" ## CASING SPAWN POINT ##"), SerializeField] 
     private Transform casingSpawnPoint;
 
     [Space(10f), Header(" ## WEAPON SETTING ##"), SerializeField]
@@ -23,14 +26,20 @@ public class TPS_AussultRifle : MonoBehaviour
     private bool isReload = false;      // 재장전중인지?
     private float lastAttackTime = 0;   // 마지막 발사 시간
 
+    [SerializeField] private Camera Camera;
+    [SerializeField] private GameObject bulletPrefeb;
     private BulletCasing_Pool bulletCasingPool;
+    private Bullet_MemoryPool bulletPool;
     private AudioSource gunAudioSource;
-
+    private Impact_MemoryPool impactMemoryPool;
+    
 
     private void Awake()
     {
         gunAudioSource = GetComponent<AudioSource>();
         bulletCasingPool = GetComponent<BulletCasing_Pool>();
+        bulletPool = GetComponent<Bullet_MemoryPool>();
+        impactMemoryPool = GetComponent<Impact_MemoryPool>();
         
         // 처음 탄 수는 최대로 설정
         weaponSetting.currentAmmo = weaponSetting.maxAmmo;
@@ -92,7 +101,7 @@ public class TPS_AussultRifle : MonoBehaviour
         {
             // 사운드가 재생중이 아니고, 현재 애니메이션이 " Idle " 이면
             // 재장전 애니메이션, 사운드 재생이 종료되었다는 것
-            if (gunAudioSource.isPlaying == false && playerAnim.CurrentAnimationIs("Idle"))
+            if (gunAudioSource.isPlaying == false && playerAnim.CurrentAnimationIs("Idle",1))
             {
                 Debug.Log("Reload 완료");
                 
@@ -149,9 +158,52 @@ public class TPS_AussultRifle : MonoBehaviour
              
              //탄피 생성
              bulletCasingPool.Spwancasing(casingSpawnPoint.position, transform.right);
+             
+             // 레이를 발사해 원하는 위치 공격
+             TwoStepRayCast();
           }
        }
-    
+
+       private void TwoStepRayCast()
+       {
+           Ray ray;
+           RaycastHit hit;
+           var targetPoint = Vector3.zero;
+           
+           // 화면의 중앙 좌표
+           ray = Camera.ViewportPointToRay(Vector2.one * .5f);
+           
+           // 공격 사거리 안에 부딪히는 오브젝트가 있으면 targetPoint는 부딪힌 위치
+           if (Physics.Raycast(ray, out hit, weaponSetting.attackDistance))
+           {
+               targetPoint = hit.point;
+           }
+           // 공격 사거리안에 부딪히는 오브젝트가 없다면 targetPoint는 최대 사거리 위치
+           else
+           {
+               targetPoint = ray.origin + ray.direction * weaponSetting.attackDistance;
+           }
+           
+           // Debug
+           Debug.DrawRay(ray.origin,ray.direction * weaponSetting.attackDistance, Color.red);
+           
+           // 첫번째 Ray로 얻어진 targetPoint를 목표지점으로 설정하고,
+           // 총구를 시작지점으로 하여 재연산
+
+           var attackDirection = (targetPoint - bulletSpawnPoint.position).normalized;
+
+           bulletPool.SpawnBullet(bulletSpawnPoint.position, 
+                            Quaternion.LookRotation(attackDirection) * Quaternion.Euler(90, 0, 0), 
+                                    attackDirection);
+           
+           // if (Physics.Raycast(bulletSpawnPoint.position, attackDirection, out hit, weaponSetting.attackDistance))
+           // {
+           //     impactMemoryPool.SpawnImpact(hit);
+           // }
+            // Debug         
+           Debug.DrawRay(bulletSpawnPoint.position, attackDirection * weaponSetting.attackDistance, Color.blue);
+       }
+       
        private void PlaySound(AudioClip clip)
        {
           gunAudioSource.Stop();

@@ -10,6 +10,8 @@ public class PlayerAnimationController : MonoBehaviour
    private static readonly int MoveSpeed = Animator.StringToHash("MoveSpeed");
    private static readonly int XDir = Animator.StringToHash("xDir");
    private static readonly int YDir = Animator.StringToHash("yDir");
+   private static readonly int Reload = Animator.StringToHash("OnReload");
+   private static readonly int Avoid = Animator.StringToHash("OnAvoid");
 
    private void Awake()
    {
@@ -36,7 +38,7 @@ public class PlayerAnimationController : MonoBehaviour
 
    public void OnReload()
    {
-      playerAnimator.SetTrigger("OnReload");
+      playerAnimator.SetTrigger(Reload);
    }
 
    public void Play(string stateName, int layer, float normalizedTime)
@@ -44,8 +46,8 @@ public class PlayerAnimationController : MonoBehaviour
       playerAnimator.Play(stateName, layer, normalizedTime);
    }
 
-   public bool CurrentAnimationIs(string name)
+   public bool CurrentAnimationIs(string name, int layernum)
    {
-      return playerAnimator.GetCurrentAnimatorStateInfo(1).IsName(name);
+      return playerAnimator.GetCurrentAnimatorStateInfo(layernum).IsName(name);
    }
 }

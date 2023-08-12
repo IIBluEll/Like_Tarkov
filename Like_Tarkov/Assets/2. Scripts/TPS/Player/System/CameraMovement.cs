@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class CameraMovement : MonoBehaviour
 {
@@ -69,13 +68,17 @@ public class CameraMovement : MonoBehaviour
     {
         var mainCamera = Camera.main;
         
+        // 마우스 오른쪽 클릭을 유지할 경우 줌 상태
         if (playerInputMgr.Mouse1Button)
         {
             PlayerBodyRotate();
+            
+            // 카메라 depth를 변경함으로 카메라 전환
             mainCamera.depth = -3;
         }
         else
         {
+            // 카메라 depth를 변경함으로 카메라 전환
             mainCamera.depth = -1;
             FreeFov();    
         }

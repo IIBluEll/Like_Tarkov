@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class TPS_PlayerMovement : MonoBehaviour
@@ -40,6 +41,8 @@ public class TPS_PlayerMovement : MonoBehaviour
     
     private float smoothness = 10f;                         // 부드러운 움직임을 위한 배율
     
+    private bool isAvoid = false;                           // 회피중인지?
+    
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -62,7 +65,7 @@ public class TPS_PlayerMovement : MonoBehaviour
         PlayerInput();      // 플레이어 입력을 처리하는 메서드
         ControlSpeed();     // 속도를 제어하는 메서드
         WeaponAction();     // 무기 발사 메서드
-        
+
         // 경사면에서의 움직임 방향 계산
         slopeMoveDirection = Vector3.ProjectOnPlane(moveDirection, slopeHit.normal);
     }
@@ -160,7 +163,9 @@ public class TPS_PlayerMovement : MonoBehaviour
         {
             aussultRifle.StartReload();
         }
+
     }
+
     
     //--------Debug-----------//
     // Assigned이 제대로 되었는지 체크
