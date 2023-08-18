@@ -3,38 +3,38 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TPS_AussultRifle : MonoBehaviour
+public class GunStatus : MonoBehaviour
 {
-    [SerializeField] private PlayerAnimationController playerAnim;
+    protected BulletCasing_Pool bulletCasingPool;
+    protected Bullet_MemoryPool bulletPool;
+    protected AudioSource gunAudioSource;
+    protected Impact_MemoryPool impactMemoryPool;
+    
+    [SerializeField] protected PlayerAnimationController playerAnim;
 
     [Header("  ## AUDIO CLIPS ##")] 
-    [SerializeField] private AudioClip audioClip_FIRE;
-    [SerializeField] private AudioClip audioClip_Reload;
-
+    [SerializeField] protected AudioClip audioClip_FIRE;
+    [SerializeField] protected AudioClip audioClip_Reload;
+    
     [Space(10f), Header(" ## FIRE EFFECT ##  "),SerializeField]
-    private GameObject muzzleFlashEffect;
+    protected GameObject muzzleFlashEffect;
 
     [Space(10f), Header(" ## BULLET SPAWN POINT ##"), SerializeField]
-    private Transform bulletSpawnPoint;
+    protected Transform bulletSpawnPoint;
     
     [Space(10f), Header(" ## CASING SPAWN POINT ##"), SerializeField] 
-    private Transform casingSpawnPoint;
+    protected Transform casingSpawnPoint;
 
     [Space(10f), Header(" ## WEAPON SETTING ##"), SerializeField]
-    private TSP_WeaponSetting weaponSetting;
-
-    private bool isReload = false;      // 재장전중인지?
-    private float lastAttackTime = 0;   // 마지막 발사 시간
-
-    [SerializeField] private Camera Camera;
-    [SerializeField] private GameObject bulletPrefeb;
-    private BulletCasing_Pool bulletCasingPool;
-    private Bullet_MemoryPool bulletPool;
-    private AudioSource gunAudioSource;
-    private Impact_MemoryPool impactMemoryPool;
+    protected TSP_WeaponSetting weaponSetting;
     
+    protected bool isReload = false;      // 재장전중인지?
+    protected float lastAttackTime = 0;   // 마지막 발사 시간
+    
+    [SerializeField] protected Camera Camera;
+    [SerializeField] protected GameObject bulletPrefeb;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         gunAudioSource = GetComponent<AudioSource>();
         bulletCasingPool = GetComponent<BulletCasing_Pool>();
@@ -44,13 +44,13 @@ public class TPS_AussultRifle : MonoBehaviour
         // 처음 탄 수는 최대로 설정
         weaponSetting.currentAmmo = weaponSetting.maxAmmo;
     }
-
-    private void OnEnable()
+    
+    protected virtual void OnEnable()
     {
         muzzleFlashEffect.SetActive(false);
     }
-
-    public void StartWeaponAction(int type = 0)
+    
+    public virtual void StartWeaponAction(int type = 0)
     {
         if (isReload == true) return;
         
@@ -69,8 +69,8 @@ public class TPS_AussultRifle : MonoBehaviour
             }
         }
     }
-
-    public void StartReload()
+    
+    public virtual void StartReload()
     {
         // 현재 재장전 중이면 재장전 불가능
         if (isReload == true) return;
@@ -80,7 +80,7 @@ public class TPS_AussultRifle : MonoBehaviour
         StartCoroutine("OnReload");
     }
     
-    public void StopWeaponAction(int type = 0)
+    public virtual void StopWeaponAction(int type = 0)
     {
         // 마우스 왼쪽 클릭
         if (type == 0)
@@ -88,8 +88,8 @@ public class TPS_AussultRifle : MonoBehaviour
             StopCoroutine("OnAttackLoop");
         }
     }
-
-    private IEnumerator OnReload()
+    
+    protected virtual IEnumerator OnReload()
     {
         isReload = true;
         
@@ -117,7 +117,7 @@ public class TPS_AussultRifle : MonoBehaviour
         }
     }
     
-    private IEnumerator OnAttackLoop()
+    protected virtual IEnumerator OnAttackLoop()
        {
           while (true)
           {
@@ -127,7 +127,7 @@ public class TPS_AussultRifle : MonoBehaviour
           }
        }
     
-       private IEnumerator OnMuzzleFlashEffect()
+    protected virtual IEnumerator OnMuzzleFlashEffect()
        {
           muzzleFlashEffect.SetActive(true);
     
@@ -136,7 +136,7 @@ public class TPS_AussultRifle : MonoBehaviour
           muzzleFlashEffect.SetActive(false);
        }
     
-       public void OnAttack()
+       public virtual void OnAttack()
        {
           if (Time.time - lastAttackTime > weaponSetting.attackRate)
           {
@@ -145,7 +145,6 @@ public class TPS_AussultRifle : MonoBehaviour
               // 탄이 없으면 공격 불가능
               if (weaponSetting.currentAmmo <= 0)
               {
-                  StartReload();
                   return;
               }
               
@@ -165,7 +164,7 @@ public class TPS_AussultRifle : MonoBehaviour
           }
        }
 
-       private void TwoStepRayCast()
+       protected virtual void TwoStepRayCast()
        {
            Ray ray;
            RaycastHit hit;
@@ -205,7 +204,7 @@ public class TPS_AussultRifle : MonoBehaviour
            Debug.DrawRay(bulletSpawnPoint.position, attackDirection * weaponSetting.attackDistance, Color.blue);
        }
        
-       private void PlaySound(AudioClip clip)
+       protected virtual void PlaySound(AudioClip clip)
        {
           gunAudioSource.Stop();
           gunAudioSource.clip = clip;

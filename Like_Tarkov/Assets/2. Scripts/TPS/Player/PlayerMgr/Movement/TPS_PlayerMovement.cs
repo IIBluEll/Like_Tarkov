@@ -53,8 +53,10 @@ public class TPS_PlayerMovement : MonoBehaviour
         // 회전을 고정시킴
         rb.freezeRotation = true;
         
+        #if UNITY_EDITOR
         //Debug - 컴포넌트들이 할당되었는지 확인
         CheckAssigned();
+        #endif
     }
 
     private void Update()
